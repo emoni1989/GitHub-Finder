@@ -1,87 +1,38 @@
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
-import Users from './components/users/Users';
 import User from './components/users/User';
-import Search from './components/users/Search';
 import Alert from './components/layout/Alert';
+import Home from './components/pages/Home'
 import About from './components/pages/About';
-import axios from 'axios';
+import NotFound from './components/pages/NotFound';
+
+import GithubState from './context/github/GithubState';
+import AlertState from './context/alert/AlertState';
+
 import './App.css';
 
-class App extends Component {
-  state = {
-    users: [],
-    user: {},
-    loading: false,
-    alert: null
-  };
-
-//Seach Github Users
-searchUsers = async text => {
-  this.setState({ loading: true });
-  const res = await axios.get(`https://api.github.com/search/users?q=${text}&token=${process.env.REACT_APP_GITHUB_TOKEN}`);
-
-  this.setState({ users: res.data.items, loading: false });
-};
-
-//Get Single Github Users
-getUser = async (username) => {
-  this.setState({ loading: true });
-  const res = await axios.get(`https://api.github.com/users/${username}?&token=${process.env.REACT_APP_GITHUB_TOKEN}`);
-
-  this.setState({ user: res.data, loading: false });
-};
-
-//Clear users from state
-clearUsers = () => this.setState({ users: [], loading: false });
-
-//Set Alert
-setAlert = (msg, type) => {
-   this.setState({ alert: { msg, type } });
-
-   setTimeout(() => this.setState({ alert: null }), 5000)
-};
-  render() {
-    const { users, user, loading } = this.state;
-
+const App = () => {
     return (
+      <GithubState>
+        <AlertState>
       <Router>
       <div className='App'>
        <Navbar />
        <div className='container'>
-         <Alert alert={this.state.alert} />
+         <Alert />
          <Switch>
-           <Route exact path='/' render={props => (
-             <Fragment>
-               <Search 
-         searchUsers={this.searchUsers} 
-         clearUsers={this.clearUsers} 
-         showClear={users.length > 0 ? true: false }
-         setAlert={this.setAlert}
-           />
-       <Users loading={loading} users={users} />
-             </Fragment>
-           )} 
-           />
+           <Route exact path='/' component = {Home} />
            <Route exact path='/about' component={About} />
-           <Route 
-           exact
-            path='/user/:login' 
-           render={props => (
-             <User { ...props } 
-             getUser={this.getUser} 
-             user={user} 
-             loading={loading} 
-             />
-           )} 
-           />
+           <Route exact path='/user/:login' component={User} />
+           <Route component={NotFound} />
          </Switch>
        </div>
       </div>
       </Router>
+      </AlertState>
+      </GithubState>
     );
-  }
 }
 
 export default App;

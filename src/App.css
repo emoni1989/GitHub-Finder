@@ -310,6 +310,7 @@ img {
 /* Forms */
 input {
   margin: 1.2rem 0;
+  border-radius: 30px;
 }
 
 .form-text {
@@ -334,6 +335,8 @@ textarea {
 input[type='submit'],
 button {
   font: inherit;
+  width: 100%;
+  border-radius: 30px;
 }
 
 table th,
@@ -349,6 +352,8 @@ table th {
 /* Navbar */
 .navbar {
   display: flex;
+  background-color: #44318d;
+  color: #fff;
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 2rem;
